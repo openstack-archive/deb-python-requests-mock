@@ -1,0 +1,5 @@
+python-requests-mock (0.4.0-1) unstable; urgency=medium
+
+  * Initial release. (Closes: #754537)
+
+ -- Thomas Goirand <zigo@debian.org>  Sat, 12 Jul 2014 15:30:04 +0800

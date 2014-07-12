@@ -1,0 +1,9 @@
+Document: requests-mock-doc
+Title: requests-mock Documentation
+Author: N/A
+Abstract: Sphinx documentation for requests-mock
+Section: Programming/Python
+
+Format: HTML
+Index: /usr/share/doc/python-requests-mock-doc/html/index.html
+Files: /usr/share/doc/python-requests-mock-doc/html/*
