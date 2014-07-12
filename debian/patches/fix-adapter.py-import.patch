@@ -1,0 +1,16 @@
+Description: Fix import form urllib3
+Author: Thomas Goirand <zigo@debian.org>
+Forwarded: no
+Last-Update: 2014-07-12
+
+--- python-requests-mock-0.4.0.orig/requests_mock/adapter.py
++++ python-requests-mock-0.4.0/requests_mock/adapter.py
+@@ -13,7 +13,7 @@
+ import json as jsonutils
+ 
+ from requests.adapters import BaseAdapter, HTTPAdapter
+-from requests.packages.urllib3.response import HTTPResponse
++from urllib3.response import HTTPResponse
+ import six
+ from six.moves.urllib import parse as urlparse
+ 
