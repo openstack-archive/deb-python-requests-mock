@@ -17,14 +17,14 @@ Build-Depends: debhelper (>= 9),
                python3-setuptools
 Build-Depends-Indep: python-fixtures,
                      python-mock,
-                     python-requests,
+                     python-requests (>= 1.1),
                      python-six,
                      python-subunit,
                      python-testtools,
                      python-urllib3,
                      python3-fixtures,
                      python3-mock,
-                     python3-requests,
+                     python3-requests (>= 1.1),
                      python3-six,
                      python3-subunit,
                      python3-testtools,
@@ -39,7 +39,7 @@ Homepage: https://github.com/jamielennox/requests-mock
 Package: python-requests-mock
 Architecture: all
 Pre-Depends: dpkg (>= 1.15.6~)
-Depends: python-requests, python-six, ${misc:Depends}, ${python:Depends}
+Depends: python-requests (>= 1.1), python-six, ${misc:Depends}, ${python:Depends}
 Description: mock out responses from the requests package - Python 2.x
  requests-mock provides a building block to stub out the HTTP requests_
  portions of your testing code. Everything in requests_ eventually goes through
@@ -52,7 +52,7 @@ Description: mock out responses from the requests package - Python 2.x
 Package: python3-requests-mock
 Architecture: all
 Pre-Depends: dpkg (>= 1.15.6~)
-Depends: python3-requests, python3-six, ${misc:Depends}, ${python3:Depends}
+Depends: python3-requests (>= 1.1), python3-six, ${misc:Depends}, ${python3:Depends}
 Description: mock out responses from the requests package - Python 3.x
  requests-mock provides a building block to stub out the HTTP requests_
  portions of your testing code. Everything in requests_ eventually goes through
