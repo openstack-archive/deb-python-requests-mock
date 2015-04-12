@@ -30,9 +30,10 @@ class MockerTests(base.TestCase):
 
     def _do_test(self, m):
         self.assertMockStarted()
-        m.register_uri('GET', 'http://www.test.com', text='resp')
+        matcher = m.register_uri('GET', 'http://www.test.com', text='resp')
         resp = requests.get('http://www.test.com')
         self.assertEqual('resp', resp.text)
+        return matcher
 
     def test_multiple_starts(self):
         mocker = requests_mock.Mocker()
@@ -87,6 +88,70 @@ class MockerTests(base.TestCase):
         inner()
         self.assertMockStopped()
 
+    def test_with_class_decorator(self):
+        outer = self
+
+        @requests_mock.mock()
+        class Decorated(object):
+
+            def test_will_be_decorated(self, m):
+                outer.assertMockStarted()
+                outer._do_test(m)
+
+            def will_not_be_decorated(self):
+                outer.assertMockStopped()
+
+        decorated_class = Decorated()
+
+        self.assertMockStopped()
+        decorated_class.test_will_be_decorated()
+        self.assertMockStopped()
+        decorated_class.will_not_be_decorated()
+        self.assertMockStopped()
+
+    def test_with_class_decorator_and_custom_kw(self):
+        outer = self
+
+        @requests_mock.mock(kw='custom_m')
+        class Decorated(object):
+
+            def test_will_be_decorated(self, **kwargs):
+                outer.assertMockStarted()
+                outer._do_test(kwargs['custom_m'])
+
+            def will_not_be_decorated(self):
+                outer.assertMockStopped()
+
+        decorated_class = Decorated()
+
+        self.assertMockStopped()
+        decorated_class.test_will_be_decorated()
+        self.assertMockStopped()
+        decorated_class.will_not_be_decorated()
+        self.assertMockStopped()
+
+    @mock.patch.object(requests_mock.mock, 'TEST_PREFIX', 'foo')
+    def test_with_class_decorator_and_custom_test_prefix(self):
+        outer = self
+
+        @requests_mock.mock()
+        class Decorated(object):
+
+            def foo_will_be_decorated(self, m):
+                outer.assertMockStarted()
+                outer._do_test(m)
+
+            def will_not_be_decorated(self):
+                outer.assertMockStopped()
+
+        decorated_class = Decorated()
+
+        self.assertMockStopped()
+        decorated_class.foo_will_be_decorated()
+        self.assertMockStopped()
+        decorated_class.will_not_be_decorated()
+        self.assertMockStopped()
+
     @requests_mock.mock()
     def test_query_string(self, m):
         url = 'http://test.url/path'
@@ -99,6 +164,26 @@ class MockerTests(base.TestCase):
         self.assertEqual(qs, m.last_request.query)
         self.assertEqual(['1'], m.last_request.qs['a'])
         self.assertEqual(['2'], m.last_request.qs['b'])
+
+    @requests_mock.mock()
+    def test_mock_matcher_attributes(self, m):
+        matcher = self._do_test(m)
+
+        self.assertEqual(1, matcher.call_count)
+        self.assertEqual(1, m.call_count)
+
+        self.assertTrue(matcher.called)
+        self.assertTrue(m.called)
+
+        self.assertEqual(m.request_history, matcher.request_history)
+        self.assertIs(m.last_request, matcher.last_request)
+
+    def test_copy(self):
+        mocker = requests_mock.mock(kw='foo', real_http=True)
+        copy_of_mocker = mocker.copy()
+        self.assertIsNot(copy_of_mocker, mocker)
+        self.assertEqual(copy_of_mocker._kw, mocker._kw)
+        self.assertEqual(copy_of_mocker._real_http, mocker._real_http)
 
 
 class MockerHttpMethodsTests(base.TestCase):

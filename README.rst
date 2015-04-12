@@ -38,14 +38,14 @@ A simple example:
     >>> resp.status_code, resp.text
     (200, 'data')
 
-Obviously having all URLs be `mock://` prefixed isn't going to useful, so you use the `requests_mock.Mocker` to get the adapter into place.
+Obviously having all URLs be `mock://` prefixed isn't going to useful, so you can use `requests_mock.mock` to get the adapter into place.
 
 As a context manager:
 
 .. code:: python
 
-    >>> with requests_mock.Mocker() as m:
-    ...     m.register_uri('GET', 'http://test.com', text='data')
+    >>> with requests_mock.mock() as m:
+    ...     m.get('http://test.com', text='data')
     ...     requests.get('http://test.com').text
     ...
     'data'
@@ -54,15 +54,20 @@ Or as a decorator:
 
 .. code:: python
 
-    >>> @requests_mock.Mocker()
+    >>> @requests_mock.mock()
     ... def test_func(m):
-    ...     m.register_uri('GET', 'http://test.com', text='data')
+    ...     m.get('http://test.com', text='data')
     ...     return requests.get('http://test.com').text
     ...
     >>> test_func()
     'data'
 
 For more information checkout the `docs`_.
+
+Reporting Bugs
+==============
+
+Please report all bugs on `LaunchPad`_.
 
 License
 =======
@@ -81,3 +86,4 @@ under the License.
 
 .. _requests: http://python-requests.org
 .. _docs: http://requests-mock.readthedocs.org
+.. _LaunchPad: https://bugs.launchpad.net/requests-mock
