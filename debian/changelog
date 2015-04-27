@@ -1,4 +1,4 @@
-python-requests-mock (0.6.0-1) UNRELEASED; urgency=medium
+python-requests-mock (0.6.0-1) unstable; urgency=medium
 
   * New upstream release.
   * Fixed new python-requests required version.
