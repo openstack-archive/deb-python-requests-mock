@@ -10,13 +10,19 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import json
 import re
 
 import requests
 import six
+from six.moves.urllib import parse as urlparse
 
 import requests_mock
 from requests_mock.tests import base
+
+
+class MyExc(Exception):
+    pass
 
 
 class SessionAdapterTests(base.TestCase):
@@ -41,6 +47,15 @@ class SessionAdapterTests(base.TestCase):
         self.assertEqual(self.url, self.adapter.last_request.url)
         self.assertEqual(method, self.adapter.last_request.method)
         self.assertEqual(body, self.adapter.last_request.body)
+
+        url_parts = urlparse.urlparse(self.url)
+        qs = urlparse.parse_qs(url_parts.query)
+        self.assertEqual(url_parts.scheme, self.adapter.last_request.scheme)
+        self.assertEqual(url_parts.netloc, self.adapter.last_request.netloc)
+        self.assertEqual(url_parts.path, self.adapter.last_request.path)
+        self.assertEqual(url_parts.query, self.adapter.last_request.query)
+        self.assertEqual(url_parts.query, self.adapter.last_request.query)
+        self.assertEqual(qs, self.adapter.last_request.qs)
 
     def test_content(self):
         data = six.b('testdata')
@@ -291,7 +306,7 @@ class SessionAdapterTests(base.TestCase):
     def test_with_regexp(self):
         self.adapter.register_uri('GET', re.compile('tester.com'), text='resp')
 
-        for u in ('mocK://www.tester.com/a', 'mock://abc.tester.com'):
+        for u in ('mock://www.tester.com/a', 'mock://abc.tester.com'):
             resp = self.session.get(u)
             self.assertEqual('resp', resp.text)
 
@@ -304,9 +319,6 @@ class SessionAdapterTests(base.TestCase):
 
     def test_requests_in_history_on_exception(self):
 
-        class MyExc(Exception):
-            pass
-
         def _test_cb(request, ctx):
             raise MyExc()
 
@@ -317,3 +329,162 @@ class SessionAdapterTests(base.TestCase):
                           self.url)
 
         self.assertEqual(self.url, self.adapter.last_request.url)
+
+    def test_not_called_and_called_count(self):
+        m = self.adapter.register_uri('GET', self.url, text='resp')
+        self.assertEqual(0, m.call_count)
+        self.assertFalse(m.called)
+
+        self.assertEqual(0, self.adapter.call_count)
+        self.assertFalse(self.adapter.called)
+
+    def test_called_and_called_count(self):
+        m = self.adapter.register_uri('GET', self.url, text='resp')
+
+        resps = [self.session.get(self.url) for i in range(0, 3)]
+
+        for r in resps:
+            self.assertEqual('resp', r.text)
+            self.assertEqual(200, r.status_code)
+
+        self.assertEqual(len(resps), m.call_count)
+        self.assertTrue(m.called)
+
+        self.assertEqual(len(resps), self.adapter.call_count)
+        self.assertTrue(self.adapter.called)
+
+    def test_adapter_picks_correct_adatper(self):
+        good = '%s://test3.url/' % self.PREFIX
+        self.adapter.register_uri('GET',
+                                  '%s://test1.url' % self.PREFIX,
+                                  text='bad')
+        self.adapter.register_uri('GET',
+                                  '%s://test2.url' % self.PREFIX,
+                                  text='bad')
+        self.adapter.register_uri('GET', good, text='good')
+        self.adapter.register_uri('GET',
+                                  '%s://test4.url' % self.PREFIX,
+                                  text='bad')
+
+        resp = self.session.get(good)
+
+        self.assertEqual('good', resp.text)
+
+    def test_adapter_is_connection(self):
+        url = '%s://test.url' % self.PREFIX
+        text = 'text'
+        self.adapter.register_uri('GET', url, text=text)
+        resp = self.session.get(url)
+
+        self.assertEqual(text, resp.text)
+        self.assertIs(self.adapter, resp.connection)
+
+    def test_send_to_connection(self):
+        url1 = '%s://test1.url/' % self.PREFIX
+        url2 = '%s://test2.url/' % self.PREFIX
+
+        text1 = 'text1'
+        text2 = 'text2'
+
+        self.adapter.register_uri('GET', url1, text=text1)
+        self.adapter.register_uri('GET', url2, text=text2)
+
+        req = requests.Request(method='GET', url=url2).prepare()
+
+        resp1 = self.session.get(url1)
+        self.assertEqual(text1, resp1.text)
+
+        resp2 = resp1.connection.send(req)
+        self.assertEqual(text2, resp2.text)
+
+    def test_request_json_with_str_data(self):
+        dict_req = {'hello': 'world'}
+        dict_resp = {'goodbye': 'world'}
+
+        m = self.adapter.register_uri('POST', self.url, json=dict_resp)
+
+        data = json.dumps(dict_req)
+        resp = self.session.post(self.url, data=data)
+
+        self.assertIs(data, m.last_request.body)
+        self.assertEqual(dict_resp, resp.json())
+        self.assertEqual(dict_req, m.last_request.json())
+
+    def test_request_json_with_bytes_data(self):
+        dict_req = {'hello': 'world'}
+        dict_resp = {'goodbye': 'world'}
+
+        m = self.adapter.register_uri('POST', self.url, json=dict_resp)
+
+        data = json.dumps(dict_req).encode('utf-8')
+        resp = self.session.post(self.url, data=data)
+
+        self.assertIs(data, m.last_request.body)
+        self.assertEqual(dict_resp, resp.json())
+        self.assertEqual(dict_req, m.last_request.json())
+
+    def test_request_json_with_cb(self):
+        dict_req = {'hello': 'world'}
+        dict_resp = {'goodbye': 'world'}
+        data = json.dumps(dict_req)
+
+        def _cb(req, context):
+            self.assertEqual(dict_req, req.json())
+            return dict_resp
+
+        m = self.adapter.register_uri('POST', self.url, json=_cb)
+        resp = self.session.post(self.url, data=data)
+
+        self.assertEqual(1, m.call_count)
+        self.assertEqual(dict_resp, resp.json())
+
+    def test_raises_exception(self):
+        self.adapter.register_uri('GET', self.url, exc=MyExc)
+
+        self.assertRaises(MyExc,
+                          self.session.get,
+                          self.url)
+
+        self.assertEqual(self.url, self.adapter.last_request.url)
+
+    def test_raises_exception_with_body_args_fails(self):
+        self.assertRaises(TypeError,
+                          self.adapter.register_uri,
+                          'GET',
+                          self.url,
+                          exc=MyExc,
+                          text='fail')
+
+    def test_sets_request_matcher_in_history(self):
+        url1 = '%s://test1.url/' % self.PREFIX
+        url2 = '%s://test2.url/' % self.PREFIX
+
+        text1 = 'text1'
+        text2 = 'text2'
+
+        m1 = self.adapter.register_uri('GET', url1, text=text1)
+        m2 = self.adapter.register_uri('GET', url2, text=text2)
+
+        resp1 = self.session.get(url1)
+        resp2 = self.session.get(url2)
+
+        self.assertEqual(text1, resp1.text)
+        self.assertEqual(text2, resp2.text)
+
+        self.assertEqual(2, self.adapter.call_count)
+
+        self.assertEqual(url1, self.adapter.request_history[0].url)
+        self.assertEqual(url2, self.adapter.request_history[1].url)
+
+        self.assertIs(m1, self.adapter.request_history[0].matcher)
+        self.assertIs(m2, self.adapter.request_history[1].matcher)
+
+    def test_sets_request_matcher_on_exception(self):
+        m = self.adapter.register_uri('GET', self.url, exc=MyExc)
+
+        self.assertRaises(MyExc,
+                          self.session.get,
+                          self.url)
+
+        self.assertEqual(self.url, self.adapter.last_request.url)
+        self.assertIs(m, self.adapter.last_request.matcher)

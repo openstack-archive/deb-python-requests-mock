@@ -12,8 +12,6 @@
 
 import re
 
-import requests
-
 from requests_mock import adapter
 from requests_mock.tests import base
 
@@ -35,8 +33,10 @@ class TestMatcher(base.TestCase):
                                    [],
                                    complete_qs,
                                    request_headers)
-        request = requests.Request(request_method, url, headers).prepare()
-        return matcher.match(request)
+        request = adapter._RequestObjectProxy._create(request_method,
+                                                      url,
+                                                      headers)
+        return matcher._match(request)
 
     def assertMatch(self,
                     target,

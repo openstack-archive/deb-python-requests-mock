@@ -1,3 +1,10 @@
+python-requests-mock (0.6.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * Fixed new python-requests required version.
+
+ -- Thomas Goirand <zigo@debian.org>  Wed, 24 Dec 2014 10:04:53 +0800
+
 python-requests-mock (0.4.0-1) unstable; urgency=medium
 
   * Initial release. (Closes: #754537)

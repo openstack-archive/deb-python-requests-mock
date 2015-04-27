@@ -17,6 +17,14 @@ import requests
 from requests_mock import adapter
 from requests_mock import exceptions
 
+DELETE = 'DELETE'
+GET = 'GET'
+HEAD = 'HEAD'
+OPTIONS = 'OPTIONS'
+PATCH = 'PATCH'
+POST = 'POST'
+PUT = 'PUT'
+
 
 class MockerCore(object):
     """A wrapper around common mocking functions.
@@ -28,7 +36,9 @@ class MockerCore(object):
     _PROXY_FUNCS = set(['last_request',
                         'register_uri',
                         'add_matcher',
-                        'request_history'])
+                        'request_history',
+                        'called',
+                        'call_count'])
 
     def __init__(self, **kwargs):
         self._adapter = adapter.Adapter()
@@ -85,10 +95,38 @@ class MockerCore(object):
 
         raise AttributeError(name)
 
+    def request(self, *args, **kwargs):
+        return self.register_uri(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self.request(GET, *args, **kwargs)
+
+    def options(self, *args, **kwargs):
+        return self.request(OPTIONS, *args, **kwargs)
+
+    def head(self, *args, **kwargs):
+        return self.request(HEAD, *args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        return self.request(POST, *args, **kwargs)
+
+    def put(self, *args, **kwargs):
+        return self.request(PUT, *args, **kwargs)
+
+    def patch(self, *args, **kwargs):
+        return self.request(PATCH, *args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        return self.request(DELETE, *args, **kwargs)
+
 
 class Mocker(MockerCore):
     """The standard entry point for mock Adapter loading.
     """
+
+    #: Defines with what should method name begin to be patched
+    TEST_PREFIX = 'test'
+
     def __init__(self, **kwargs):
         """Create a new mocker adapter.
 
@@ -107,7 +145,26 @@ class Mocker(MockerCore):
     def __exit__(self, type, value, traceback):
         self.stop()
 
-    def __call__(self, func):
+    def __call__(self, obj):
+        if isinstance(obj, type):
+            return self.decorate_class(obj)
+
+        return self.decorate_callable(obj)
+
+    def copy(self):
+        """Returns an exact copy of current mock
+        """
+        m = Mocker(
+            kw=self._kw,
+            real_http=self._real_http
+        )
+        return m
+
+    def decorate_callable(self, func):
+        """Decorates a callable
+
+        :param callable func: callable to decorate
+        """
         @functools.wraps(func)
         def inner(*args, **kwargs):
             with self as m:
@@ -120,3 +177,26 @@ class Mocker(MockerCore):
                 return func(*args, **kwargs)
 
         return inner
+
+    def decorate_class(self, klass):
+        """Decorates methods in a class with request_mock
+
+        Method will be decorated only if it name begins with `TEST_PREFIX`
+
+        :param object klass: class which methods will be decorated
+        """
+        for attr_name in dir(klass):
+            if not attr_name.startswith(self.TEST_PREFIX):
+                continue
+
+            attr = getattr(klass, attr_name)
+            if not hasattr(attr, '__call__'):
+                continue
+
+            m = self.copy()
+            setattr(klass, attr_name, m(attr))
+
+        return klass
+
+
+mock = Mocker
