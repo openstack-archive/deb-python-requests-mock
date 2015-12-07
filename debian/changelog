@@ -6,6 +6,7 @@ python-requests-mock (0.7.0-1) UNRELEASED; urgency=medium
 
   [ Corey Bryant ]
   * New upstream release.
+  * d/rules: Switch UPSTREAM_GIT to github/openstack repo.
 
  -- Corey Bryant <corey.bryant@canonical.com>  Mon, 07 Dec 2015 15:34:55 -0500
 
