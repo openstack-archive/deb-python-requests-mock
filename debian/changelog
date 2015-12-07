@@ -1,9 +1,13 @@
-python-requests-mock (0.6.0-1) UNRELEASED; urgency=medium
+python-requests-mock (0.7.0-1) UNRELEASED; urgency=medium
 
+  [ Thomas Goirand ]
   * New upstream release.
   * Fixed new python-requests required version.
 
- -- Thomas Goirand <zigo@debian.org>  Wed, 24 Dec 2014 10:04:53 +0800
+  [ Corey Bryant ]
+  * New upstream release.
+
+ -- Corey Bryant <corey.bryant@canonical.com>  Mon, 07 Dec 2015 15:34:55 -0500
 
 python-requests-mock (0.4.0-1) unstable; urgency=medium
 
