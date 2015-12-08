@@ -1,3 +1,9 @@
+python-requests-mock (0.7.0-1) experimental; urgency=medium
+
+  * New upstream release.
+
+ -- Thomas Goirand <zigo@debian.org>  Tue, 08 Dec 2015 15:05:30 +0100
+
 python-requests-mock (0.6.0-2) unstable; urgency=medium
 
   * Fixed Uploaders: field.
