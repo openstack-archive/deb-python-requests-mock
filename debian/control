@@ -28,7 +28,7 @@ Build-Depends-Indep: python-fixtures,
                      python3-urllib3,
                      subunit,
                      testrepository,
-Standards-Version: 3.9.6
+Standards-Version: 3.9.7
 Vcs-Browser: https://anonscm.debian.org/cgit/openstack/python-requests-mock.git/
 Vcs-Git: https://anonscm.debian.org/git/openstack/python-requests-mock.git
 Homepage: https://github.com/jamielennox/requests-mock

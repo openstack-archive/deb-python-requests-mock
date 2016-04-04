@@ -5,6 +5,7 @@ python-requests-mock (0.7.0-2) unstable; urgency=medium
 
   [ Thomas Goirand ]
   * Uploading to unstable.
+  * Standards-Version: 3.9.7 (no change).
 
  -- Thomas Goirand <zigo@debian.org>  Mon, 04 Apr 2016 10:06:54 +0000
 
