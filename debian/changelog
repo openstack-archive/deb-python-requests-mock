@@ -1,9 +1,13 @@
-python-requests-mock (0.7.0-3) UNRELEASED; urgency=medium
+python-requests-mock (1.0.0-1) UNRELEASED; urgency=medium
 
+  [ Ondřej Nový ]
   * Standards-Version is 3.9.8 now (no change)
   * d/rules: Changed UPSTREAM_GIT protocol to https
 
- -- Ondřej Nový <novy@ondrej.org>  Sat, 09 Apr 2016 19:30:59 +0200
+  [ Corey Bryant ]
+  * New upstream release.
+
+ -- Corey Bryant <corey.bryant@canonical.com>  Mon, 11 Jul 2016 10:01:30 -0400
 
 python-requests-mock (0.7.0-2) unstable; urgency=medium
 
