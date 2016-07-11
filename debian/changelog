@@ -6,6 +6,7 @@ python-requests-mock (1.0.0-1) UNRELEASED; urgency=medium
 
   [ Corey Bryant ]
   * New upstream release.
+  * d/p/*: Rebased.
 
  -- Corey Bryant <corey.bryant@canonical.com>  Mon, 11 Jul 2016 10:01:30 -0400
 
