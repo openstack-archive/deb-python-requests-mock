@@ -10,6 +10,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import copy
 import json
 import weakref
 
@@ -31,11 +32,19 @@ class _RequestObjectProxy(object):
     the request_history users will be able to access these properties.
     """
 
-    def __init__(self, request):
+    def __init__(self, request, **kwargs):
         self._request = request
         self._matcher = None
         self._url_parts_ = None
         self._qs = None
+
+        # All of these params should always exist but we use a default
+        # to make the test setup easier.
+        self._timeout = kwargs.pop('timeout', None)
+        self._allow_redirects = kwargs.pop('allow_redirects', None)
+        self._verify = kwargs.pop('verify', None)
+        self._cert = kwargs.pop('cert', None)
+        self._proxies = copy.deepcopy(kwargs.pop('proxies', {}))
 
     def __getattr__(self, name):
         return getattr(self._request, name)
@@ -69,6 +78,26 @@ class _RequestObjectProxy(object):
             self._qs = urlparse.parse_qs(self.query)
 
         return self._qs
+
+    @property
+    def timeout(self):
+        return self._timeout
+
+    @property
+    def allow_redirects(self):
+        return self._allow_redirects
+
+    @property
+    def verify(self):
+        return self._verify
+
+    @property
+    def cert(self):
+        return self._cert
+
+    @property
+    def proxies(self):
+        return self._proxies
 
     @classmethod
     def _create(cls, *args, **kwargs):
@@ -237,7 +266,7 @@ class Adapter(BaseAdapter, _RequestHistoryTracker):
         self._matchers = []
 
     def send(self, request, **kwargs):
-        request = _RequestObjectProxy(request)
+        request = _RequestObjectProxy(request, **kwargs)
         self._add_to_history(request)
 
         for matcher in reversed(self._matchers):
