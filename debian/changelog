@@ -1,4 +1,4 @@
-python-requests-mock (1.0.0-1) UNRELEASED; urgency=medium
+python-requests-mock (1.0.0-1) experimental; urgency=medium
 
   [ Ondřej Nový ]
   * Standards-Version is 3.9.8 now (no change)
@@ -8,7 +8,10 @@ python-requests-mock (1.0.0-1) UNRELEASED; urgency=medium
   * New upstream release.
   * d/p/*: Rebased.
 
- -- Corey Bryant <corey.bryant@canonical.com>  Mon, 11 Jul 2016 10:01:30 -0400
+  [ Thomas Goirand ]
+  * Added Corey as uploaders.
+
+ -- Thomas Goirand <zigo@debian.org>  Tue, 12 Jul 2016 14:32:46 +0000
 
 python-requests-mock (0.7.0-2) unstable; urgency=medium
 
