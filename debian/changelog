@@ -10,6 +10,7 @@ python-requests-mock (1.0.0-1) experimental; urgency=medium
 
   [ Thomas Goirand ]
   * Added Corey as uploaders.
+  * Using pkgos-dh_auto_{test,install} from openstack-pkg-tools >= 52~.
 
  -- Thomas Goirand <zigo@debian.org>  Tue, 12 Jul 2016 14:32:46 +0000
 
