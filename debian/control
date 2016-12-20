@@ -16,7 +16,7 @@ Build-Depends: debhelper (>= 10),
                python3-setuptools,
 Build-Depends-Indep: python-fixtures,
                      python-mock,
-                     python-requests,
+                     python-requests (>> 1.2.3),
                      python-six,
                      python-testtools,
                      python-urllib3,
@@ -36,7 +36,7 @@ Homepage: https://github.com/jamielennox/requests-mock
 
 Package: python-requests-mock
 Architecture: all
-Depends: python-requests,
+Depends: python-requests (>> 1.2.3),
          python-six,
          ${misc:Depends},
          ${python:Depends},
@@ -51,7 +51,7 @@ Description: mock out responses from the requests package - Python 2.x
 
 Package: python3-requests-mock
 Architecture: all
-Depends: python3-requests,
+Depends: python3-requests (>> 1.2.3),
          python3-six,
          ${misc:Depends},
          ${python3:Depends},

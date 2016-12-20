@@ -1,2 +1,3 @@
 no-intersphinx.patch
 removed-privacy-breach-in-docs.patch
+fix-test-real-http.patch
