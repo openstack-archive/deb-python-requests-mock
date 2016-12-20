@@ -1,8 +1,14 @@
-python-requests-mock (1.0.0-4) UNRELEASED; urgency=medium
+python-requests-mock (1.0.0-4) unstable; urgency=medium
 
+  * Team upload.
+
+  [ Ondřej Nový ]
   * Bumped debhelper compat version to 10
 
- -- Ondřej Nový <onovy@debian.org>  Thu, 24 Nov 2016 00:11:01 +0100
+  [ Ondřej Kobližek ]
+  * Fix tests: Remove obsolete hack for requests 1.2.3 (Closes: #848741)
+
+ -- Ondřej Kobližek <koblizeko@gmail.com>  Tue, 20 Dec 2016 09:07:58 +0100
 
 python-requests-mock (1.0.0-3) unstable; urgency=medium
 
