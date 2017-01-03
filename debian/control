@@ -43,7 +43,7 @@ Depends: python-requests (>> 1.2.3),
 Description: mock out responses from the requests package - Python 2.x
  requests-mock provides a building block to stub out the HTTP requests_
  portions of your testing code. Everything in requests_ eventually goes through
- an adapter to do the transport work. requests-mock creates a custom adatper
+ an adapter to do the transport work. requests-mock creates a custom adapter
  that allows you to predefine responses when certain URIs are called. There are
  then a number of methods provided to get the adapter used.
  .
@@ -58,7 +58,7 @@ Depends: python3-requests (>> 1.2.3),
 Description: mock out responses from the requests package - Python 3.x
  requests-mock provides a building block to stub out the HTTP requests_
  portions of your testing code. Everything in requests_ eventually goes through
- an adapter to do the transport work. requests-mock creates a custom adatper
+ an adapter to do the transport work. requests-mock creates a custom adapter
  that allows you to predefine responses when certain URIs are called. There are
  then a number of methods provided to get the adapter used.
  .
@@ -73,7 +73,7 @@ Depends: ${misc:Depends},
 Description: mock out responses from the requests package - doc
  requests-mock provides a building block to stub out the HTTP requests_
  portions of your testing code. Everything in requests_ eventually goes through
- an adapter to do the transport work. requests-mock creates a custom adatper
+ an adapter to do the transport work. requests-mock creates a custom adapter
  that allows you to predefine responses when certain URIs are called. There are
  then a number of methods provided to get the adapter used.
  .

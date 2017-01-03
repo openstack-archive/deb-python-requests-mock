@@ -4,6 +4,7 @@ python-requests-mock (1.0.0-4) unstable; urgency=medium
 
   [ Ondřej Nový ]
   * Bumped debhelper compat version to 10
+  * Fixed typo in package description
 
   [ Ondřej Kobližek ]
   * Fix tests: Remove obsolete hack for requests 1.2.3 (Closes: #848741)
